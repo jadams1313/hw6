@@ -1,6 +1,6 @@
 ---
 title: "Homework 6"
-author: "[Insert your name here]{style='background-color: yellow;'}"
+author: "[Jacob Adams]{style='background-color: yellow;'}"
 toc: true
 title-block-banner: true
 title-block-style: default
@@ -12,25 +12,29 @@ execute:
   pdf: 
     fig-width: 7
     fig-height: 7
+editor: 
+  markdown: 
+    wrap: 72
 ---
 
-
 ::: {.callout-important style="font-size: 0.8em;"}
+Please read the instructions carefully before submitting your
+assignment.
 
-Please read the instructions carefully before submitting your assignment.
+1.  This assignment requires you to only upload a `PDF` file on Canvas
+2.  Don't collapse any code cells before submitting.
+3.  Remember to make sure all your code output is rendered properly
+    before uploading your submission.
 
-1. This assignment requires you to only upload a `PDF` file on Canvas
-1. Don't collapse any code cells before submitting. 
-1. Remember to make sure all your code output is rendered properly before uploading your submission.
-
-⚠️ Please add your name to the author information in the frontmatter before submitting your assignment ⚠️
+⚠️ Please add your name to the author information in the frontmatter
+before submitting your assignment ⚠️
 :::
 
-
-In this assignment, we will perform various tasks involving principal component analysis (PCA), principal component regression, and dimensionality reduction.
+In this assignment, we will perform various tasks involving principal
+component analysis (PCA), principal component regression, and
+dimensionality reduction.
 
 We will need the following packages:
-
 
 ```{R, message=FALSE, warning=FALSE, results='hide'}
 packages <- c(
@@ -48,150 +52,340 @@ packages <- c(
 sapply(packages, require, character.only=T)
 ```
 
-<br><br><br><br>
----
+## <br><br><br><br>
 
 ## Question 1
-::: {.callout-tip}
+
+::: callout-tip
 ## 70 points
+
 Principal component anlaysis and variable selection
 :::
 
 ###### 1.1 (5 points)
 
-
-The `data` folder contains a `spending.csv` dataset which is an illustrative sample of monthly spending data for a group of $5000$ people across a variety of categories. The response variable, `income`, is their monthly income, and objective is to predict the `income` for a an individual based on their spending patterns.
+The `data` folder contains a `spending.csv` dataset which is an
+illustrative sample of monthly spending data for a group of $5000$
+people across a variety of categories. The response variable, `income`,
+is their monthly income, and objective is to predict the `income` for a
+an individual based on their spending patterns.
 
 Read the data file as a tibble in R. Preprocess the data such that:
 
-1. the variables are of the right data type, e.g., categorical variables are encoded as factors
-2. all column names to lower case for consistency
-3. Any observations with missing values are dropped
+1.  the variables are of the right data type, e.g., categorical
+    variables are encoded as factors
+2.  all column names to lower case for consistency
+3.  Any observations with missing values are dropped
 
-```R
+```{R}
 path <- "data/spending.csv"
 
-df <- ... # Insert your code here
+df <- read_csv(path)
+
+df <- df %>%
+  rename_all(tolower) %>%
+  drop_na()
+df <- as_tibble(df)
+  
 ```
 
----
+------------------------------------------------------------------------
 
 ###### 1.2 (5 points)
 
-Visualize the correlation between the variables using the `corrplot()` function. What do you observe? What does this mean for the model?
+Visualize the correlation between the variables using the `corrplot()`
+function. What do you observe? What does this mean for the model?
 
-```R
-df_x  %>% ... # Insert your code here
+```{R}
+corrlelation_matrix <- cor(df)
+corrplot(corrlelation_matrix, method = "color")
 ```
 
----
+*There is a large amount of collinearity between about half of all the
+predictor variables. As a result, this is very troublesome for the
+model, since collinearity often leads to inconsistent models.*
+
+------------------------------------------------------------------------
 
 ###### 1.3 (5 points)
 
-Run a linear regression model to predict the `income` variable using the remaining predictors. Interpret the coefficients and summarize your results. 
+Run a linear regression model to predict the `income` variable using the
+remaining predictors. Interpret the coefficients and summarize your
+results.
 
-
-```R
-... # Insert your code here
+```{R}
+lm_fit <- lm(income ~., data = df)
+summary(lm_fit)
 ```
 
----
+##Interpretation of coefficientients: Accessories: Each unit increase in
+spending on accessories leads to an increase of 0.299876 in the response
+to income.
+
+Accommodation: Each unit increase in spending on accommodation leads to
+an increase of 0.113632 in the response to income.
+
+Alcohol: Spending on alcohol does not significantly affect the response
+to income.
+
+Audio Equipment: Each unit increase in spending on audio equipment leads
+to an increase of 0.602004 in the response to income.
+
+Beverages: Spending on beverages does not significantly affect the
+response to income.
+
+Books: Each unit increase in spending on books leads to an increase of
+0.070530 in the response to income.
+
+Cameras: Each unit increase in spending on cameras leads to an increase
+of 0.461827 in the response to income.
+
+Car Rentals: Each unit increase in spending on car rentals leads to an
+increase of 0.124875 in the response to income.
+
+Clothing: Each unit increase in spending on clothing leads to an
+increase of 0.504228 in the response to income.
+
+Coffee Shops: Spending on coffee shops does not significantly affect the
+response to income.
+
+Dairy Products: Spending on dairy products does not significantly affect
+the response to income.
+
+Desktops: Each unit increase in spending on desktops leads to an
+increase of 0.391673 in the response to income.
+
+Electronics: Each unit increase in spending on electronics leads to an
+increase of 1.079627 in the response to income.
+
+Fast Food: Each unit increase in spending on fast food leads to an
+increase of 0.077531 in the response to income.
+
+Food Delivery: Spending on food delivery does not significantly affect
+the response to income.
+
+Fruits: Spending on fruits does not significantly affect the response to
+income.
+
+Groceries: Each unit increase in spending on groceries leads to an
+increase of 0.077694 in the response to income.
+
+Gym Memberships: Each unit increase in spending on gym memberships leads
+to an increase of 0.141168 in the response to income.
+
+Jewelry: Each unit increase in spending on jewelry leads to an increase
+of 0.213726 in the response to income.
+
+Laptops: Each unit increase in spending on laptops leads to an increase
+of 0.594328 in the response to income.
+
+Magazines: Each unit increase in spending on magazines leads to an
+increase of 0.080762 in the response to income.
+
+Meat: Each unit increase in spending on meat leads to an increase of
+0.081262 in the response to income.
+
+Movies: Each unit increase in spending on movies leads to an increase of
+0.110296 in the response to income.
+
+Music: Each unit increase in spending on music leads to an increase of
+0.159925 in the response to income.
+
+Outdoor Activities: Each unit increase in spending on outdoor activities
+leads to an increase of 0.087846 in the response to income.
+
+Public Transportation: Spending on public transportation does not
+significantly affect the response to income.
+
+Restaurant Meals: Spending on restaurant meals does not significantly
+affect the response to income.
+
+Seafood: Spending on seafood does not significantly affect the response
+to income.
+
+Shoes: Each unit increase in spending on shoes leads to an increase of
+0.463185 in the response to income.
+
+Smartphones: Each unit increase in spending on smartphones leads to an
+increase of 0.780150 in the response to income.
+
+Snacks: Spending on snacks does not significantly affect the response to
+income.
+
+Software: Each unit increase in spending on software leads to an
+increase of 0.408500 in the response to income.
+
+Sports Equipment: Spending on sports equipment does not significantly
+affect the response to income.
+
+Streaming Services: Each unit increase in spending on streaming services
+leads to an increase of 0.150614 in the response to income.
+
+Tablets: Each unit increase in spending on tablets leads to an increase
+of 0.637266 in the response to income.
+
+Travel: Each unit increase in spending on travel leads to an increase of
+0.129161 in the response to income.
+
+Vegetables: Spending on vegetables does not significantly affect the
+response to income.
+
+Video Games: Each unit increase in spending on video games leads to an
+increase of 0.863309 in the response to income.
+
+Watches: Each unit increase in spending on watches leads to an increase
+of 0.145853 in the response to income.
+
+Non-significant predictors (p-value \> 0.05):
+
+Alcohol Beverages Coffee Shops Dairy Products Food Delivery Fruits
+Public Transportation Seafood Snacks Sports Equipment ---
 
 ###### 1.3 (5 points)
 
-Diagnose the model using the `vif()` function. What do you observe? What does this mean for the model?
+Diagnose the model using the vif function. What do you observe? What
+does this mean for the model?
 
-```R
-... # Insert your code here
+```{R}
+print(vif(lm_fit))
 ```
 
----
+*According to the rules of variance inflation factor, any values of
+"vif" above 5 are considered to have a high degree of
+multi-collinearity. Thus, we can see this model has an enormous amount
+of collinearity which will lead to an inneffective model.*
+
+------------------------------------------------------------------------
 
 ###### 1.4 (5 points)
 
-Perform PCA using the `princomp` function in R. Print the summary of the PCA object.
+Perform PCA using the `princomp` function in R. Print the summary of the
+PCA object.
 
-```R
-pca <- ... # Insert your code here
-... # Insert your code here
+```{R}
+pca <- princomp(df, cor = TRUE)
+summary(pca)
 ```
 
----
+------------------------------------------------------------------------
 
 ###### 1.5 (5 points)
 
-Make a screeplot of the proportion of variance explained by each principal component. How many principal components would you choose to keep? Why?
+Make a screeplot of the proportion of variance explained by each
+principal component. How many principal components would you choose to
+keep? Why?
 
-```R
-... # Insert your code here
+```{R}
+screeplot(pca, type = "l")
 ```
 
+*I would keep 4 principal components based off of the screeplot. This is
+because only 4 components seem to explain the high degree of variance
+before it levels off.*
 
 ###### 1.6 (5 points)
 
-By setting any factor loadings below $0.2$ to $0$, summarize the factor loadings for the principal components that you chose to keep. 
+By setting any factor loadings below $0.2$ to $0$, summarize the factor
+loadings for the principal components that you chose to keep.
 
-```R
-clean_loadings <- ... # Insert your code here
+```{R}
+loadings <- pca$loadings 
+clean_loading <- ifelse(pca$loadings[, 1:40] < 0.2, 0, round(pca$loadings[, 1:40], 2)) %>% as.data.frame()
+View(clean_loading)
+
 ```
 
+Visualize the factor loadings.
 
-Visualize the factor loadings. 
-
-```R
-... # Insert your code here
+```{R}
+clean_loading %>% as.matrix() %>% t() %>% corrplot()
 ```
 
----
+------------------------------------------------------------------------
 
 ###### 1.7 (15 points)
 
-Based on the factor loadings, what do you think the principal components represent? 
+Based on the factor loadings, what do you think the principal components
+represent?
+
+*Based off the corrplot above I would keep components 1 and 2. These
+principal components represent a strong correlation between the
+variables and response variable that may be present in the data.*
 
 Provide an interpreation for each principal component you chose to keep.
 
----
+*Choosing to keep the principal components 1 and 2. We see in component
+one that alcohol, beverages, coffe_shop, dairy_products, fast_food,
+food_delivery, fruits, and groceries, meat, restaurant_meals, seafood,
+snacks, and vegetables all seem to be valid predictors. In component two
+we see accommodation, audio_equipment, books, car_rentals,
+gym_memberships, magazines, movies, music, outdoor_activities,
+public_transportation, sports_equipment, streaming_services, and travel
+seem to be valid predictors as well. The other components have a
+stronger correlation, but far less predictors. In the context of this
+data set, we should probably choose the larger models.*
+
+------------------------------------------------------------------------
 
 ###### 1.8 (10 points)
 
-Create a new data frame with the original response variable `income` and the principal components you chose to keep. Call this data frame `df_pca`.
+Create a new data frame with the original response variable `income` and
+the principal components you chose to keep. Call this data frame
+`df_pca`.
 
-```R
-... # Insert your code here
+```{R}
+Z <- predict(pca, df) 
+
+df_pca <- Z %>% as_tibble %>% select(Comp.1, Comp.2) %>% mutate(income = df$income)
 ```
 
-Fit a regression model to predict the `income` variable using the principal components you chose to keep. Interpret the coefficients and summarize your results. 
+###### 1.9 (10 points)
 
-```R
-... # Insert your code here
+Fit a regression model to predict the `income` variable using the
+principal components you chose to keep. Interpret the coefficients and
+summarize your results.
+
+```{R}
+lm_pca_fit <- lm(income ~., data = df_pca)
+summary(lm_pca_fit)
 ```
 
-Compare the results of the regression model in 1.3 and 1.9. What do you observe? What does this mean for the model?
+Interpretation:
 
-```R
-... # Insert your code here
+Comp.1: For every one unit increase in component one variables, there is
+a 17.324 increase in income. Comp.2: For every one unit increase in
+component two variables, there is a 1.682 decrease in income
+
+Compare the results of the regression model in 1.3 and 1.9. What do you
+observe? What does this mean for the model?
+
+```{R}
+
 
 ```
----
+
+------------------------------------------------------------------------
 
 ###### 1.10 (10 points)
 
-Based on your interpretation of the principal components from Question 1.7, provide an interpretation of the regression model in Question 1.9.
+Based on your interpretation of the principal components from Question
+1.7, provide an interpretation of the regression model in Question 1.9.
 
+*Examining the model we can see there is a high degree of error in the
+model. This may be because of a previous error where I decided to take
+more predictors over highly correlated components with less predictors.
+Component one is much more effective in predicting the income compared
+to component two. For example, it is a significant predictor where
+component two is not. Overall, it is still a better model than the
+original regression model.*
 
+------------------------------------------------------------------------
 
----
-
-
-:::{.hidden unless-format="pdf"}
+::: {.hidden unless-format="pdf"}
 \pagebreak
 :::
 
-<br><br><br><br>
-<br><br><br><br>
----
-
-
+<br><br><br><br> <br><br><br><br> ---
 
 ::: {.callout-note collapse="true"}
 ## Session Information
